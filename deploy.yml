@@ -1,0 +1,38 @@
+name: Deploy to Cloudflare
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Install dependencies
+      run: npm install  # ou outro comando de instalação, se necessário
+
+    - name: Build project
+      run: npm run build  # ou outro comando de build, se necessário
+
+    - name: Deploy to Cloudflare (Domain 1)
+      uses: cloudflare/wrangler-action@1.3.0
+      with:
+        apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN_1 }}
+        accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID_1 }}
+        zoneId: ${{ secrets.CLOUDFLARE_ZONE_ID_1 }}
+        entryPoint: 'public/'  # ou o diretório onde está o conteúdo
+        bucketName: 'kuara.bio.br'  # nome do bucket no Cloudflare
+
+    - name: Deploy to Cloudflare (Domain 2)
+      uses: cloudflare/wrangler-action@1.3.0
+      with:
+        apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN_2 }}
+        accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID_2 }}
+        zoneId: ${{ secrets.CLOUDFLARE_ZONE_ID_2 }}
+        entryPoint: 'public/'  # ou o diretório onde está o conteúdo
+        bucketName: 'reservakuara.eco.br'  # nome do bucket no Cloudflare
